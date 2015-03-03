@@ -1,26 +1,26 @@
 /*
- Copyright (c) 2012 Jesse Andersen. All rights reserved.
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy of
- this software and associated documentation files (the "Software"), to deal in
- the Software without restriction, including without limitation the rights to
- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- of the Software, and to permit persons to whom the Software is furnished to do
- so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
- If you happen to meet one of the copyright holders in a bar you are obligated
- to buy them one pint of beer.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+   Copyright (c) 2012 Jesse Andersen. All rights reserved.
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy of
+   this software and associated documentation files (the "Software"), to deal in
+   the Software without restriction, including without limitation the rights to
+   use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+   of the Software, and to permit persons to whom the Software is furnished to do
+   so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   If you happen to meet one of the copyright holders in a bar you are obligated
+   to buy them one pint of beer.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
  */
 
 #import <UIKit/UIKit.h>
@@ -60,7 +60,7 @@ typedef enum _JASidePanelState {
 - (void)toggleRightPanel:(id)sender;
 
 // Calling this while the left or right panel is visible causes the center panel to be completely hidden
-- (void)setCenterPanelHidden:(BOOL)centerPanelHidden animated:(BOOL)animated duration:(NSTimeInterval) duration;
+- (void)setCenterPanelHidden:(BOOL)centerPanelHidden animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 #pragma mark - Look & Feel
 
@@ -71,7 +71,7 @@ typedef enum _JASidePanelState {
 @property (nonatomic, assign) BOOL pushesSidePanels;
 
 // size the left panel based on % of total screen width
-@property (nonatomic) CGFloat leftGapPercentage; 
+@property (nonatomic) CGFloat leftGapPercentage;
 
 // size the left panel based on this fixed size. overrides leftGapPercentage
 @property (nonatomic) CGFloat leftFixedWidth;
@@ -91,8 +91,11 @@ typedef enum _JASidePanelState {
 // by default applies a black shadow to the container. override in sublcass to change
 - (void)styleContainer:(UIView *)container animate:(BOOL)animate duration:(NSTimeInterval)duration;
 
-// by default applies rounded corners to the panel. override in sublcass to change
-- (void)stylePanel:(UIView *)panel;
+// Sublcass to modify style.
+// - (void)stylePanel:(UIView *)panel;
+
+// by default applies rounded animate to the panel. override in sublcass to change
+- (CGFloat)calculatedDuration;  // https://github.com/kiwamunet/JASidePanels/commit/b231f4138b7dd8320c12275a2e2cbcd7f0d2be65
 
 #pragma mark - Animation
 
@@ -146,6 +149,9 @@ typedef enum _JASidePanelState {
 
 // If set to yes, "shouldAutorotateToInterfaceOrientation:" will be passed to self.visiblePanel instead of handled directly
 @property (nonatomic, assign) BOOL shouldDelegateAutorotateToVisiblePanel; // defaults to YES
+
+// If set to yes, "preferredStatusBarStyle" will be passed to self.visiblePanel instead of handled directly
+@property (nonatomic, assign) BOOL shouldDelegatePreferredStatusBarStyleToVisiblePanel; // defaults to YES
 
 // Determines whether or not the panel's views are removed when not visble. If YES, rightPanel & leftPanel's views are eligible for viewDidUnload
 @property (nonatomic, assign) BOOL canUnloadRightPanel; // defaults to NO
