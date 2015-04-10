@@ -25,12 +25,16 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "JASidePanelController.h"
+
+
 //////////////////////////////////////
-//Walkthrough, Added by PS19 - DATE - 9-10-2014
+// Walkthrough, Added by PS19 - DATE - 9-10-2014
 //////////////////////////////////////
 #import "WalkthroughVar.h"
 //////////////////////////////////////
+
 static char ja_kvoContext;
+
 
 @interface JASidePanelController () {
     CGRect _centerPanelRestingFrame;
@@ -488,7 +492,7 @@ static char ja_kvoContext;
 
 #pragma mark - Panels
 
-- (void)setCenterPanel:(UIViewController *)centerPanel
+- (void)setCenterPanel:(UIViewController *)centerPanel // completion:(void (^)(void))completionBlock
 {
     UIViewController *previous = _centerPanel;
     if (centerPanel != _centerPanel)
@@ -525,6 +529,7 @@ static char ja_kvoContext;
          } completion:^(__unused BOOL finished) {
              [self _swapCenter:previous previousState:previousState with:_centerPanel];
              [self _showCenterPanel:YES bounce:NO];
+// completionBlock();
          }];
     }
 }
@@ -634,13 +639,16 @@ static char ja_kvoContext;
     if (gestureRecognizer.view == self.tapView)
     {
         //////////////////////////////////////
-        //Walkthrough, Added by PS19 - DATE - 21-10-2014
+        // Walkthrough, Added by PS19 - DATE - 21-10-2014
         //////////////////////////////////////
         WalkthroughVar *walkthroughShared = [WalkthroughVar sharedInstance];
-        
-        if(walkthroughShared.isAppUsedFirstTime == TRUE){
+
+        if (walkthroughShared.isAppUsedFirstTime == TRUE)
+        {
             return NO;
-        }else{
+        }
+        else
+        {
             return YES;
         }
     }
@@ -684,18 +692,21 @@ static char ja_kvoContext;
         if (possible && ((translate.x > 0 && self.leftPanel) || (translate.x < 0 && self.rightPanel)))
         {
             //////////////////////////////////////
-            //Walkthrough, Added by PS19 - DATE - 9-10-2014
+            // Walkthrough, Added by PS19 - DATE - 9-10-2014
             //////////////////////////////////////
             WalkthroughVar *walkthroughShared = [WalkthroughVar sharedInstance];
-            
-            if(walkthroughShared.isAppUsedFirstTime == TRUE)
-        {
+
+            if (walkthroughShared.isAppUsedFirstTime == TRUE)
+            {
                 return NO;
-            }else{
-            return YES;
+            }
+            else
+            {
+                return YES;
             }
         }
     }
+
     return NO;
 }
 
@@ -873,15 +884,14 @@ static char ja_kvoContext;
 - (void)_centerPanelTapped:(__unused UIGestureRecognizer *)gesture
 {
     //////////////////////////////////////
-    //Walkthrough, Added by PS19 - DATE - 9-10-2014
+    // Walkthrough, Added by PS19 - DATE - 9-10-2014
     //////////////////////////////////////
     WalkthroughVar *walkthroughShared = [WalkthroughVar sharedInstance];
-    
-    if(walkthroughShared.isAppUsedFirstTime == FALSE)
+
+    if (walkthroughShared.isAppUsedFirstTime == FALSE)
     {
         [self _showCenterPanel:YES bounce:NO];
     }
-    
 }
 
 
@@ -1030,6 +1040,10 @@ static char ja_kvoContext;
             [self stylePanel:_leftPanel.view];
             [self.leftPanelContainer addSubview:_leftPanel.view];
         }
+        else
+        {
+            [self.leftPanel viewWillAppear:YES]; // Route "viewWillAppear" to presented view in left/right panel
+        }
 
         self.leftPanelContainer.hidden = NO;
     }
@@ -1048,6 +1062,10 @@ static char ja_kvoContext;
             _rightPanel.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             [self stylePanel:_rightPanel.view];
             [self.rightPanelContainer addSubview:_rightPanel.view];
+        }
+        else
+        {
+            [self.rightPanel viewWillAppear:YES]; // Route "viewWillAppear" to presented view in left/right panel
         }
 
         self.rightPanelContainer.hidden = NO;
@@ -1230,6 +1248,11 @@ static char ja_kvoContext;
 
 - (void)_showLeftPanel:(BOOL)animated bounce:(BOOL)shouldBounce
 {
+    if ([_delegate respondsToSelector:@selector(panelController:willShowLeftPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self willShowLeftPanelAnimated:animated bounce:shouldBounce];
+    }
+
     self.state = JASidePanelLeftVisible;
     [self _loadLeftPanel];
 
@@ -1255,12 +1278,22 @@ static char ja_kvoContext;
     }
 
     [self _toggleScrollsToTopForCenter:NO left:YES right:NO];
+
+    if ([_delegate respondsToSelector:@selector(panelController:didShowLeftPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self didShowLeftPanelAnimated:animated bounce:shouldBounce];
+    }
 }
 
 
 
 - (void)_showRightPanel:(BOOL)animated bounce:(BOOL)shouldBounce
 {
+    if ([_delegate respondsToSelector:@selector(panelController:willShowRightPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self willShowRightPanelAnimated:animated bounce:shouldBounce];
+    }
+
     self.state = JASidePanelRightVisible;
     [self _loadRightPanel];
 
@@ -1286,12 +1319,22 @@ static char ja_kvoContext;
     }
 
     [self _toggleScrollsToTopForCenter:NO left:NO right:YES];
+
+    if ([_delegate respondsToSelector:@selector(panelController:didShowRightPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self didShowRightPanelAnimated:animated bounce:shouldBounce];
+    }
 }
 
 
 
 - (void)_showCenterPanel:(BOOL)animated bounce:(BOOL)shouldBounce
 {
+    if ([_delegate respondsToSelector:@selector(panelController:willShowCenterPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self willShowCenterPanelAnimated:animated bounce:shouldBounce];
+    }
+
     self.state = JASidePanelCenterVisible;
 
     [self _adjustCenterFrame];
@@ -1320,6 +1363,11 @@ static char ja_kvoContext;
 
     self.tapView = nil;
     [self _toggleScrollsToTopForCenter:YES left:NO right:NO];
+
+    if ([_delegate respondsToSelector:@selector(panelController:didShowCenterPanelAnimated:bounce:)])
+    {
+        [_delegate panelController:self didShowCenterPanelAnimated:animated bounce:shouldBounce];
+    }
 }
 
 
